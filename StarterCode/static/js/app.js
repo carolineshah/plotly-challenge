@@ -45,8 +45,9 @@ function makePlot(samples, names, metadata) {
         otu_ids.push(topOtuIds);
         otu_labels.push(topOtuLabels);
     };
-    // made trace for first sample
-    let trace =  {
+
+    // make bar trace for first sample
+    let barTrace =  {
         x: sample_values[0],
         // cant figure out how to get OTU in front without messing it up
         y: otu_ids[0],
@@ -54,12 +55,29 @@ function makePlot(samples, names, metadata) {
         type: 'bar',
         orientation: 'h'
     };
-    var layout = {
+    var barLayout = {
         yaxis: { type: 'category' },
-        title: `Sample #`
+        title: `Sample ${samples[0]['id']}`
      };
-    let traces = [trace];
-    Plotly.newPlot('plot', traces, layout);
+    let barTraces = [barTrace];
+    Plotly.newPlot('bar', barTraces, barLayout);
+
+    // make bubble chart for first sample
+    let bubbleTrace = {
+        x: otu_ids[0],
+        y: sample_values[0],
+        text: otu_labels[0],
+        mode: 'markers',
+        marker: {size: sample_values[0], color: otu_ids[0]}
+    };
+    let bubbleTraces = [bubbleTrace];
+    let bubbleLayout = {
+        title: `Sample ${samples[0]['id']}`,
+        yaxis: { type: 'category' },
+        xaxis: { type: 'category' }
+    };
+
+    Plotly.newPlot('bubble', bubbleTraces, bubbleLayout);
 };
 
 
