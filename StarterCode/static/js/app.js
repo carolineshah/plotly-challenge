@@ -27,9 +27,6 @@ function init() {
 let sample_values = [];
 let otu_ids = [];
 let otu_labels = [];
-let all_sample_values = [];
-let all_otu_ids = [];
-let all_otu_labels = [];
 // Initializes bar chart, bubble chart, and demo info to the first sample
 function makePlot(samples, names, metadata) {
 
