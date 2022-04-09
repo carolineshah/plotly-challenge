@@ -27,6 +27,9 @@ function init() {
 let sample_values = [];
 let otu_ids = [];
 let otu_labels = [];
+let all_sample_values = [];
+let all_otu_ids = [];
+let all_otu_labels = [];
 // Initializes bar chart, bubble chart, and demo info to the first sample
 function makePlot(samples, names, metadata) {
 
@@ -42,20 +45,29 @@ function makePlot(samples, names, metadata) {
         sample_values.push(topSamples);
         otu_ids.push(topOtuIds);
         otu_labels.push(topOtuLabels);
+
     };
+
 
     // make bar trace for first sample
     let barTrace =  {
         x: sample_values[0],
-        // cant figure out how to get OTU in front without messing it up
         y: otu_ids[0],
         text: otu_labels[0],
         type: 'bar',
         orientation: 'h'
     };
     var barLayout = {
-        yaxis: { type: 'category' },
-        title: `Sample ${samples[0]['id']}`
+        yaxis: { 
+            tickprefix: 'OTU ',
+            type: 'category' 
+        },
+        xaxis: {
+            title: 'Sample Values'
+        },
+        title: `Sample ${samples[0]['id']}`,
+        width: 700,
+        height: 500
      };
     let barTraces = [barTrace];
     Plotly.newPlot('bar', barTraces, barLayout);
@@ -67,21 +79,35 @@ function makePlot(samples, names, metadata) {
         y: sample_values[0],
         text: otu_labels[0],
         mode: 'markers',
-        marker: {size: sample_values[0], color: otu_ids[0]}
+        marker: {
+            size: sample_values[0], 
+            color: otu_ids[0]
+        }
     };
     let bubbleTraces = [bubbleTrace];
     let bubbleLayout = {
         title: `Sample ${samples[0]['id']}`,
-        yaxis: { type: 'category' },
-        xaxis: { type: 'category' }
+        yaxis: { 
+            automargin: true,
+            title: 'Sample Values', 
+            type: 'category' 
+        },
+        xaxis: { 
+            automargin: true,
+            title: 'OTU ID',
+            type: 'category'
+        },
+        width: 1000,
+        height: 650
     };
     Plotly.newPlot('bubble', bubbleTraces, bubbleLayout);
-
+    
     // Demographic information section
-    let ul = d3.select('ul');
+    let metadataInfo = d3.select("#sample-metadata");
+    metadataInfo.html("");
     // loop through indv dictionaries of metadata
     for (let k = 0; k < Object.keys(metadata[0]).length; k++) {
-        ul.append('li').text(`${Object.keys(metadata[0])[k]}: ${Object.values(metadata[0])[k]}`);
+        metadataInfo.append('p').text(`${Object.keys(metadata[0])[k]}: ${Object.values(metadata[0])[k]}`);
     };
 
 
@@ -98,15 +124,22 @@ function optionChanged(value) {
             // update bar chart
             let barTraceValue =  {
                 x: sample_values[j],
-                // cant figure out how to get OTU in front without messing it up
                 y: otu_ids[j],
                 text: otu_labels[j],
                 type: 'bar',
                 orientation: 'h'
             };
             var barLayoutValue = {
-                yaxis: { type: 'category' },
-                title: `Sample ${samples[j]['id']}`
+                yaxis: { 
+                    tickprefix: 'OTU ',
+                    type: 'category' 
+                },
+                xaxis: {
+                    title: 'Sample Values'
+                },
+                title: `Sample ${samples[j]['id']}`,
+                width: 700,
+                height: 500
              };
             let barTracesValue = [barTraceValue];
             Plotly.newPlot('bar', barTracesValue, barLayoutValue);
@@ -117,24 +150,36 @@ function optionChanged(value) {
                 y: sample_values[j],
                 text: otu_labels[j],
                 mode: 'markers',
-                marker: {size: sample_values[j], color: otu_ids[j]}
+                marker: {
+                    size: sample_values[j], 
+                    color: otu_ids[j]
+                }
             };
             let bubbleTracesValue = [bubbleTraceValue];
             let bubbleLayoutValue = {
                 title: `Sample ${samples[j]['id']}`,
-                yaxis: { type: 'category' },
-                xaxis: { type: 'category' }
+                yaxis: { 
+                    automargin: true,
+                    title: 'Sample Values', 
+                    type: 'category' 
+                },
+                xaxis: { 
+                    automargin: true,
+                    title: 'OTU ID',
+                    type: 'category'
+                },
+                width: 1000,
+                height: 650
             };
             Plotly.newPlot('bubble', bubbleTracesValue, bubbleLayoutValue);
 
             // update demographic info
-            let ul = d3.select('ul');
-            // delete previous list elements
-            ul.selectAll('li').remove();
+            let metadataInfo = d3.select("#sample-metadata");
+            metadataInfo.html("");
             // loop through indv dictionaries of metadata
             for (let k = 0; k < Object.keys(metadata[j]).length; k++) {
-                // append new list elements
-                ul.append('li').text(`${Object.keys(metadata[j])[k]}: ${Object.values(metadata[j])[k]}`);
+                // append new demo info
+                metadataInfo.append('p').text(`${Object.keys(metadata[j])[k]}: ${Object.values(metadata[j])[k]}`);
             };
         };
     };
